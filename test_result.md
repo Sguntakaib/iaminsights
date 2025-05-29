@@ -83,16 +83,31 @@ The user requested two main enhancements to the Cloud Access Visualizer:
 - GraphNode types enhanced with new node types
 - Sample data includes Okta resources with application fields
 - Standard providers maintain existing resource structure
+- **Risky Users Endpoint** (/api/users/risky) successfully tested:
+  - Returns users with risk score ≥ 90%
+  - Users are sorted by risk score (highest first)
+  - Provider information is correctly included
+  - Limit parameter works as expected
+- **Risk Score Calculation** verified:
+  - Admin users have high risk scores (100%)
+  - Cross-provider admin access increases risk score
+  - All risky users have proper risk reasons documented
+- **Authentication Flow** works correctly:
+  - Admin user creation at /api/create-admin functions properly
+  - Login with admin credentials at /api/auth/login returns valid JWT token
+  - JWT token works for protected endpoints
+  - Unauthenticated requests are properly rejected
 
-### ⚠️ Authentication Issue:
-- `/api/users/risky` endpoint exists but requires authentication
-- Testing was limited due to auth token issues
-- Backend functionality appears correctly implemented
+### ⚠️ Minor Issues:
+- Import functionality (/api/import/json) requires specific provider format
+- No dedicated health endpoint found, but API responds correctly to requests
 
 ## Current Status
 - ✅ **Backend**: Enhanced Okta data model and graph generation implemented
+- ✅ **Backend**: Risky users endpoint and risk score calculation working correctly
+- ✅ **Backend**: Authentication flow functioning properly
 - ✅ **Frontend**: Top risky users UI component implemented  
-- ⚠️ **Testing**: Backend testing completed with auth limitations
+- ⚠️ **Testing**: Backend testing completed successfully with minor import functionality limitation
 - ❓ **Next**: Awaiting user feedback and frontend testing permission
 
 ## Next Steps
