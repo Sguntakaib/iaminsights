@@ -2690,6 +2690,51 @@ async def get_provider_dashboard(
         logging.error(f"Error getting provider dashboard: {str(e)}")
         raise HTTPException(status_code=500, detail="Error retrieving dashboard data")
 
+@api_router.get("/users/risky")
+async def get_top_risky_users(
+    limit: int = 10,
+    current_user: User = Depends(get_current_user)
+):
+    """Get top risky users with their risk scores and reasons"""
+    try:
+        users = await db.user_access.find().to_list(1000)
+        risky_users = []
+        
+        for user_doc in users:
+            user_access = UserAccess(**user_doc)
+            analyzed_user = analyze_user_access(user_access)
+            risk_result = calculate_comprehensive_risk_score(analyzed_user)
+            
+            # Get primary risk reason
+            primary_risk_reason = "Multiple risk factors"
+            if risk_result.risk_factors:
+                primary_risk_reason = risk_result.risk_factors[0].description
+            
+            # Count admin access across providers
+            admin_access_count = len([r for r in user_access.resources if r.access_type in ["admin", "owner"]])
+            
+            risky_users.append({
+                "user_email": user_access.user_email,
+                "user_name": user_access.user_name,
+                "department": user_access.department or "Unknown",
+                "job_title": user_access.job_title or "Unknown",
+                "risk_score": risk_result.overall_score,
+                "risk_level": risk_result.risk_level,
+                "risk_reason": primary_risk_reason,
+                "admin_access_count": admin_access_count,
+                "cross_provider_admin": analyzed_user.cross_provider_admin,
+                "providers": list(set([r.provider for r in user_access.resources])),
+                "total_resources": len(user_access.resources)
+            })
+        
+        # Sort by risk score descending and return top N
+        risky_users.sort(key=lambda x: x["risk_score"], reverse=True)
+        return risky_users[:limit]
+        
+    except Exception as e:
+        logging.error(f"Error getting risky users: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving risky users")
+
 @api_router.get("/risk-analysis/{user_email}")
 async def get_user_risk_analysis(
     user_email: str,
