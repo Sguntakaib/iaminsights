@@ -1606,6 +1606,20 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
 
 # API Routes
 
+# Sample Data Initialization Endpoint
+@api_router.post("/init-sample-data")
+async def initialize_sample_data(current_user: User = Depends(get_current_user)):
+    """Initialize database with sample data (admin only)"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Only admins can initialize sample data")
+    
+    try:
+        await init_sample_data()
+        return {"message": "Sample data initialized successfully"}
+    except Exception as e:
+        logging.error(f"Error initializing sample data: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error initializing sample data")
+
 # Authentication Endpoints
 # Authentication endpoints
 @api_router.post("/auth/signup")
