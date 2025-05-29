@@ -434,6 +434,141 @@ PROVIDER_SAMPLES = {
                 }
             ]
         }
+    },
+    "github": {
+        "provider": "github",
+        "description": "GitHub access data with repositories, teams, roles, and permissions",
+        "required_fields": ["provider", "service", "resource_type", "resource_name", "access_type"],
+        "sample_format": {
+            "metadata": {
+                "import_date": "2024-12-19T10:30:00Z",
+                "source": "github_audit",
+                "description": "GitHub access audit data"
+            },
+            "users": [
+                {
+                    "user_email": "developer@company.com",
+                    "user_name": "Alex Developer",
+                    "department": "Engineering",
+                    "job_title": "Senior Developer",
+                    "groups": ["engineering-team", "backend-team"],
+                    "roles": ["developer", "code-reviewer"],
+                    "resources": [
+                        {
+                            "provider": "github",
+                            "service": "GitHub",
+                            "resource_type": "repository",
+                            "resource_name": "company/backend-api",
+                            "access_type": "admin",
+                            "risk_level": "high",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Admin access to main backend repository",
+                            "permission_details": {
+                                "push": True,
+                                "pull": True,
+                                "admin": True,
+                                "maintain": True,
+                                "triage": True
+                            }
+                        },
+                        {
+                            "provider": "github",
+                            "service": "GitHub",
+                            "resource_type": "organization",
+                            "resource_name": "company",
+                            "access_type": "write",
+                            "risk_level": "medium",
+                            "is_privileged": False,
+                            "mfa_required": True,
+                            "description": "Member access to organization"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "unified": {
+        "provider": "unified",
+        "description": "Unified format supporting multiple cloud providers in a single JSON file",
+        "required_fields": ["provider", "service", "resource_type", "resource_name", "access_type"],
+        "sample_format": {
+            "metadata": {
+                "import_date": "2024-12-19T10:30:00Z",
+                "source": "unified_audit",
+                "description": "Multi-cloud access audit data",
+                "providers": ["aws", "gcp", "azure", "okta", "github"],
+                "aggregation_enabled": True
+            },
+            "users": [
+                {
+                    "user_email": "devops@company.com",
+                    "user_name": "DevOps Engineer",
+                    "department": "Engineering",
+                    "job_title": "Senior DevOps Engineer",
+                    "groups": ["engineering", "platform-team", "security-team"],
+                    "roles": ["devops", "admin", "security-officer"],
+                    "resources": [
+                        {
+                            "provider": "aws",
+                            "service": "S3",
+                            "resource_type": "bucket",
+                            "resource_name": "production-logs",
+                            "resource_arn": "arn:aws:s3:::production-logs",
+                            "access_type": "read",
+                            "region": "us-east-1",
+                            "account_id": "123456789012",
+                            "risk_level": "medium",
+                            "is_privileged": False,
+                            "mfa_required": True,
+                            "description": "Read access to production logs"
+                        },
+                        {
+                            "provider": "gcp",
+                            "service": "Compute Engine",
+                            "resource_type": "instance",
+                            "resource_name": "web-server-prod",
+                            "access_type": "admin",
+                            "region": "us-central1",
+                            "account_id": "company-prod-project",
+                            "risk_level": "high",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Admin access to production web servers"
+                        },
+                        {
+                            "provider": "github",
+                            "service": "GitHub",
+                            "resource_type": "repository",
+                            "resource_name": "company/infrastructure",
+                            "access_type": "admin",
+                            "risk_level": "critical",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Admin access to infrastructure repository",
+                            "permission_details": {
+                                "push": True,
+                                "pull": True,
+                                "admin": True,
+                                "maintain": True,
+                                "triage": True
+                            }
+                        },
+                        {
+                            "provider": "okta",
+                            "service": "Admin Console",
+                            "resource_type": "application",
+                            "resource_name": "Okta Admin",
+                            "access_type": "admin",
+                            "risk_level": "critical",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Admin access to Okta console"
+                        }
+                    ]
+                }
+            ]
+        }
     }
 }
 
