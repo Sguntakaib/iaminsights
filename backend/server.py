@@ -1634,7 +1634,7 @@ async def create_admin_user():
         admin_user = User(
             id=user_id,
             email="admin@cloudvis.com",
-            name="Admin User",
+            full_name="Admin User",
             hashed_password=hashed_password,
             role=UserRole.ADMIN
         )
