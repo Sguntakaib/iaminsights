@@ -8,8 +8,7 @@ import {
   Search, Users, Shield, BarChart3, Cloud, Server, Database, Key, 
   Download, RefreshCw, Filter, Eye, Settings, Upload, 
   FileText, AlertTriangle, CheckCircle, User, Home,
-  ChevronRight,
-  ShieldCheck
+  ChevronRight, ShieldCheck
 } from "lucide-react";
 
 // Register the layout extension
