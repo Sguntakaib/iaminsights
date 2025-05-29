@@ -378,12 +378,33 @@ const CloudAccessVisualizer = () => {
       await fetchStatistics();
       await fetchAnalytics();
       
-      alert(`Successfully imported ${response.data.imported_users} users!`);
+      alert(`Successfully imported ${response.data.users_inserted + response.data.users_updated} users across ${response.data.providers_found.length} providers!`);
     } catch (error) {
       console.error("Error importing file:", error);
       alert("Error importing file: " + (error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadUnifiedSample = async () => {
+    try {
+      const response = await axios.get(`${API}/providers/samples/unified/download`, {
+        responseType: 'blob',
+      });
+      
+      const blob = new Blob([response.data], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'unified-cloud-access-sample.json';
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading unified sample:", error);
+      alert("Error downloading sample file");
     }
   };
 
