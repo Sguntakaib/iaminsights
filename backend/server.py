@@ -74,6 +74,7 @@ class CloudProvider(str, Enum):
     GCP = "gcp"
     AZURE = "azure"
     OKTA = "okta"
+    GITHUB = "github"
 
 # Provider Sample Data Models
 class ProviderSample(BaseModel):
