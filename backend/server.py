@@ -1617,6 +1617,34 @@ async def initialize_sample_data():
         logging.error(f"Error initializing sample data: {str(e)}")
         raise HTTPException(status_code=500, detail="Error initializing sample data")
 
+# Create admin user endpoint (for testing)
+@api_router.post("/create-admin")
+async def create_admin_user():
+    """Create an admin user for testing"""
+    try:
+        # Check if admin already exists
+        existing_admin = await db.users.find_one({"email": "admin@cloudvis.com"})
+        if existing_admin:
+            return {"message": "Admin user already exists"}
+        
+        # Create admin user
+        user_id = str(uuid.uuid4())
+        hashed_password = hash_password("SecurePass123!")
+        
+        admin_user = User(
+            id=user_id,
+            email="admin@cloudvis.com",
+            name="Admin User",
+            hashed_password=hashed_password,
+            role=UserRole.ADMIN
+        )
+        
+        await db.users.insert_one(admin_user.dict())
+        return {"message": "Admin user created successfully", "email": "admin@cloudvis.com", "password": "SecurePass123!"}
+    except Exception as e:
+        logging.error(f"Error creating admin user: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error creating admin user")
+
 # Authentication Endpoints
 # Authentication endpoints
 @api_router.post("/auth/signup")
