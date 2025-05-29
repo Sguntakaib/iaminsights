@@ -1052,10 +1052,33 @@ const CloudAccessVisualizer = () => {
             {/* Sample Format Display */}
             {providerSamples[selectedImportProvider] && (
               <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
-                <h4 className="text-white font-medium mb-3">Sample {selectedImportProvider.toUpperCase()} Format:</h4>
-                <pre className="text-slate-300 text-xs overflow-x-auto bg-slate-900 p-3 rounded">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-white font-medium">Sample {selectedImportProvider.toUpperCase()} Format:</h4>
+                  {selectedImportProvider === 'unified' && (
+                    <button
+                      onClick={downloadUnifiedSample}
+                      className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Full Sample
+                    </button>
+                  )}
+                </div>
+                <pre className="text-slate-300 text-xs overflow-x-auto bg-slate-900 p-3 rounded max-h-96">
                   {JSON.stringify(providerSamples[selectedImportProvider].sample_format, null, 2)}
                 </pre>
+                {selectedImportProvider === 'unified' && (
+                  <div className="mt-3 p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg">
+                    <p className="text-blue-300 text-sm font-medium mb-2">✨ Unified Format Benefits:</p>
+                    <ul className="text-slate-300 text-xs space-y-1">
+                      <li>• <strong>Single import file</strong> for all cloud providers</li>
+                      <li>• <strong>Automatic user aggregation</strong> across platforms</li>
+                      <li>• <strong>Supports partial imports</strong> (only AWS, only GitHub, etc.)</li>
+                      <li>• <strong>Enhanced error handling</strong> with detailed validation</li>
+                      <li>• <strong>GitHub support</strong> with repository, team, and permission tracking</li>
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>
