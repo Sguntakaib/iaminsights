@@ -699,7 +699,7 @@ const CloudAccessVisualizer = () => {
             ) : (
               <div className="text-center py-8">
                 <ShieldCheck className="mx-auto h-12 w-12 text-gray-500" />
-                <p className="mt-2 text-sm text-gray-400">No users with risk score > 90%</p>
+                <p className="mt-2 text-sm text-gray-400">No users with risk score &gt; 90%</p>
                 <p className="text-xs text-gray-500">Import user data to see high-risk analytics</p>
               </div>
             )}
