@@ -198,6 +198,7 @@ const CloudAccessVisualizer = () => {
   useEffect(() => {
     fetchStatistics();
     fetchAllUsers();
+    fetchRiskyUsers();
     fetchAnalytics();
     fetchProviderSamples();
   }, []);
@@ -217,6 +218,18 @@ const CloudAccessVisualizer = () => {
       setAllUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchRiskyUsers = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await axios.get(`${API}/users/risky?limit=10`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRiskyUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching risky users:", error);
     }
   };
 
