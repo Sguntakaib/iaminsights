@@ -195,7 +195,7 @@ class AccessAnalytics(BaseModel):
 class GraphNode(BaseModel):
     id: str
     label: str
-    type: str  # "user", "provider", "service", "resource"
+    type: str  # "user", "provider", "service", "resource", "application", "access"
     provider: Optional[str] = None
     access_type: Optional[str] = None
     color: Optional[str] = None
