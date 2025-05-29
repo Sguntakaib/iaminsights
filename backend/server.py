@@ -1585,26 +1585,75 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
             # Create resource/access nodes
             for resource in service_resources_list:
                 resource_node_id = f"resource-{resource.id}"
-                resource_label = f"{resource.resource_name}\n({resource.access_type})"
                 
-                resource_node = GraphNode(
-                    id=resource_node_id,
-                    label=resource_label,
-                    type="resource",
-                    provider=provider,
-                    access_type=resource.access_type,
-                    color=access_colors.get(resource.access_type, "#6C757D")
-                )
-                nodes.append(resource_node)
-                
-                # Edge from service to resource
-                resource_edge = GraphEdge(
-                    id=f"edge-{service}-{resource.id}",
-                    source=service_node_id,
-                    target=resource_node_id,
-                    label=resource.access_type
-                )
-                edges.append(resource_edge)
+                # For Okta resources, use application_name and structure as okta > app > access
+                if provider == "okta" and resource.application_name:
+                    # Create application node
+                    app_node_id = f"app-{provider}-{resource.application_name.replace(' ', '-').lower()}"
+                    app_node = GraphNode(
+                        id=app_node_id,
+                        label=resource.application_name,
+                        type="application",
+                        provider=provider,
+                        color=provider_colors.get(provider, "#6C757D")
+                    )
+                    
+                    # Check if app node already exists
+                    app_exists = any(node.id == app_node_id for node in nodes)
+                    if not app_exists:
+                        nodes.append(app_node)
+                        
+                        # Edge from service to application
+                        app_edge = GraphEdge(
+                            id=f"edge-{service}-{resource.application_name}",
+                            source=service_node_id,
+                            target=app_node_id,
+                            label="provides"
+                        )
+                        edges.append(app_edge)
+                    
+                    # Create access node under application
+                    access_label = f"{resource.resource_name}\n({resource.application_access_type or resource.access_type})"
+                    resource_node = GraphNode(
+                        id=resource_node_id,
+                        label=access_label,
+                        type="access",
+                        provider=provider,
+                        access_type=resource.application_access_type or resource.access_type,
+                        color=access_colors.get(resource.application_access_type or resource.access_type, "#6C757D")
+                    )
+                    nodes.append(resource_node)
+                    
+                    # Edge from application to access
+                    resource_edge = GraphEdge(
+                        id=f"edge-{resource.application_name}-{resource.id}",
+                        source=app_node_id,
+                        target=resource_node_id,
+                        label=resource.application_access_type or resource.access_type
+                    )
+                    edges.append(resource_edge)
+                else:
+                    # Standard resource node for non-Okta providers
+                    resource_label = f"{resource.resource_name}\n({resource.access_type})"
+                    
+                    resource_node = GraphNode(
+                        id=resource_node_id,
+                        label=resource_label,
+                        type="resource",
+                        provider=provider,
+                        access_type=resource.access_type,
+                        color=access_colors.get(resource.access_type, "#6C757D")
+                    )
+                    nodes.append(resource_node)
+                    
+                    # Edge from service to resource
+                    resource_edge = GraphEdge(
+                        id=f"edge-{service}-{resource.id}",
+                        source=service_node_id,
+                        target=resource_node_id,
+                        label=resource.access_type
+                    )
+                    edges.append(resource_edge)
     
     return GraphData(nodes=nodes, edges=edges)
 
