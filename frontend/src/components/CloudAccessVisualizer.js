@@ -941,8 +941,8 @@ const CloudAccessVisualizer = () => {
             {/* Provider Selection */}
             <div className="mb-6">
               <label className="block text-slate-300 font-medium mb-3">Select Provider for Sample Format:</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {['aws', 'gcp', 'azure', 'okta'].map(provider => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                {['aws', 'gcp', 'azure', 'okta', 'github'].map(provider => (
                   <button
                     key={provider}
                     onClick={() => setSelectedImportProvider(provider)}
@@ -956,6 +956,38 @@ const CloudAccessVisualizer = () => {
                     <div className="text-sm font-medium">{provider.toUpperCase()}</div>
                   </button>
                 ))}
+              </div>
+              
+              {/* Unified Format Option */}
+              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <button
+                      onClick={() => setSelectedImportProvider('unified')}
+                      className={`flex items-center p-3 rounded-lg border transition-colors duration-200 ${
+                        selectedImportProvider === 'unified'
+                          ? 'border-blue-500 bg-blue-600/20 text-white'
+                          : 'border-slate-600 bg-slate-700/30 text-slate-300 hover:bg-slate-700/50'
+                      }`}
+                    >
+                      <span className="text-2xl mr-3">🌐</span>
+                      <div className="text-left">
+                        <div className="text-sm font-medium">UNIFIED FORMAT</div>
+                        <div className="text-xs text-slate-400">All providers in one file</div>
+                      </div>
+                    </button>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-semibold">
+                      RECOMMENDED
+                    </span>
+                    <div className="text-xs text-slate-400 mt-1">
+                      • Single import for all providers<br/>
+                      • User aggregation across platforms<br/>
+                      • Simplified data management
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
