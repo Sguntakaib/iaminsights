@@ -643,7 +643,7 @@ const CloudAccessVisualizer = () => {
                   <div 
                     key={user.user_email} 
                     className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 cursor-pointer transition-colors"
-                    onClick={() => handleUserClick(user.user_email)}
+                    onClick={() => handleUserSelect(user.user_email)}
                   >
                     <div className="flex items-center space-x-4">
                       <div className="flex-shrink-0">
