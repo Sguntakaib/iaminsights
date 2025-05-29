@@ -225,12 +225,23 @@ const CloudAccessVisualizer = () => {
   const fetchRiskyUsers = async () => {
     try {
       const token = localStorage.getItem('auth_token');
+      console.log('Fetching risky users with token:', token ? 'Token found' : 'No token');
+      
+      if (!token) {
+        console.warn('No auth token found, skipping risky users fetch');
+        setRiskyUsers([]); // Set empty array to show "no users found" message
+        return;
+      }
+      
       const response = await axios.get(`${API}/users/risky?limit=10`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('Risky users response:', response.data);
       setRiskyUsers(response.data);
     } catch (error) {
       console.error("Error fetching risky users:", error);
+      console.error("Error details:", error.response?.data);
+      setRiskyUsers([]); // Set empty array on error
     }
   };
 
