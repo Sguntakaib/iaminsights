@@ -28,6 +28,7 @@ const CloudAccessVisualizer = () => {
   const [loading, setLoading] = useState(false);
   const [statistics, setStatistics] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [riskyUsers, setRiskyUsers] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState("all");
   const [selectedAccessType, setSelectedAccessType] = useState("all");
   const [showLegend, setShowLegend] = useState(true);
