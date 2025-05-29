@@ -618,25 +618,51 @@ const CloudAccessVisualizer = () => {
             </div>
           )}
 
-          {/* Quick Access - Sample Users */}
-          {allUsers.length > 0 && !userInfo && (
+          {/* Top 10 Risky Users */}
+          {riskyUsers.length > 0 && !userInfo && (
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
               <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <Users className="w-5 h-5 mr-2" />
-                Quick Access - Sample Users
+                <AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
+                Top 10 Risky Users
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {allUsers.slice(0, 3).map((user) => (
-                  <button
-                    key={user.user_email}
-                    onClick={() => handleUserSelect(user.user_email)}
-                    className="text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200"
-                  >
-                    <p className="text-white font-medium">{user.user_name}</p>
-                    <p className="text-blue-400 text-sm">{user.user_email}</p>
-                    <p className="text-slate-400 text-xs mt-1">{user.resources.length} resources</p>
-                  </button>
-                ))}
+              <div className="space-y-3">
+                {riskyUsers.map((user, index) => {
+                  const getRiskColor = (riskScore) => {
+                    if (riskScore >= 80) return 'text-red-400 bg-red-400/10 border-red-400/30';
+                    if (riskScore >= 60) return 'text-orange-400 bg-orange-400/10 border-orange-400/30';
+                    if (riskScore >= 40) return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30';
+                    return 'text-green-400 bg-green-400/10 border-green-400/30';
+                  };
+
+                  return (
+                    <button
+                      key={user.user_email}
+                      onClick={() => handleUserSelect(user.user_email)}
+                      className="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-slate-400 text-sm">#{index + 1}</span>
+                            <div>
+                              <p className="text-white font-medium">{user.user_name}</p>
+                              <p className="text-blue-400 text-sm">{user.user_email}</p>
+                              <p className="text-slate-400 text-xs">{user.department} • {user.total_resources} resources</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`px-3 py-1 rounded-full text-sm font-medium border ${getRiskColor(user.risk_score)}`}>
+                            {user.risk_score}
+                          </div>
+                          <p className="text-slate-400 text-xs mt-1 max-w-32 truncate" title={user.risk_reason}>
+                            {user.risk_reason}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
