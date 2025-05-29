@@ -7,7 +7,9 @@ import EnhancedAnalytics from "./EnhancedAnalytics";
 import { 
   Search, Users, Shield, BarChart3, Cloud, Server, Database, Key, 
   Download, RefreshCw, Filter, Eye, Settings, Upload, 
-  FileText, AlertTriangle, CheckCircle, User, Home
+  FileText, AlertTriangle, CheckCircle, User, Home,
+  ChevronRight,
+  ShieldCheck
 } from "lucide-react";
 
 // Register the layout extension
