@@ -2819,9 +2819,10 @@ async def get_top_risky_users(
                 "total_resources": len(user_access.resources)
             })
         
-        # Sort by risk score descending and return top N
-        risky_users.sort(key=lambda x: x["risk_score"], reverse=True)
-        return risky_users[:limit]
+        # Filter users with risk score > 90 and sort by risk score descending
+        high_risk_users = [user for user in risky_users if user["risk_score"] > 90]
+        high_risk_users.sort(key=lambda x: x["risk_score"], reverse=True)
+        return high_risk_users[:limit]
         
     except Exception as e:
         logging.error(f"Error getting risky users: {str(e)}")
