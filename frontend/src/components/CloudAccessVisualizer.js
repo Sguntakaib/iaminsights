@@ -463,13 +463,20 @@ const CloudAccessVisualizer = () => {
   };
 
   const getProviderIcon = (provider) => {
+    const iconStyle = "w-6 h-6 object-contain";
     switch (provider) {
-      case 'aws': return '☁️';
-      case 'gcp': return '🌩️';
-      case 'azure': return '⭐';
-      case 'okta': return '🔐';
-      case 'github': return '🐙';
-      default: return '🌐';
+      case 'aws': 
+        return <img src="https://cdn.worldvectorlogo.com/logos/aws-2.svg" alt="AWS" className={iconStyle} />;
+      case 'gcp': 
+        return <img src="https://cloud.google.com/images/social-icon-google-cloud-1200-630.png" alt="GCP" className={iconStyle} />;
+      case 'azure': 
+        return <img src="https://cdn.worldvectorlogo.com/logos/azure-1.svg" alt="Azure" className={iconStyle} />;
+      case 'okta': 
+        return <img src="https://www.okta.com/sites/default/files/media/image/2021-02/Logo_Blue_Okta_0.svg" alt="Okta" className={iconStyle} />;
+      case 'github': 
+        return <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" className={iconStyle} />;
+      default: 
+        return <div className="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center text-xs">?</div>;
     }
   };
 
