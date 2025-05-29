@@ -676,10 +676,17 @@ const CloudAccessVisualizer = () => {
                             {user.risk_score}
                           </span>
                         </div>
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center space-x-2">
                           <p className="text-xs text-gray-400">
                             {user.department || 'No Department'} • {user.risk_reason || 'Multiple risk factors'}
                           </p>
+                          <div className="flex space-x-1">
+                            {user.providers && user.providers.map((provider, idx) => (
+                              <div key={idx} className="inline-block">
+                                {getProviderIcon(provider)}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                       <div className="flex-shrink-0">
