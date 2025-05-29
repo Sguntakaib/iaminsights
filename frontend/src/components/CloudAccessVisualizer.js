@@ -432,6 +432,7 @@ const CloudAccessVisualizer = () => {
       case 'gcp': return '🌩️';
       case 'azure': return '⭐';
       case 'okta': return '🔐';
+      case 'github': return '🐙';
       default: return '🌐';
     }
   };
