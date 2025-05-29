@@ -618,54 +618,77 @@ const CloudAccessVisualizer = () => {
             </div>
           )}
 
-          {/* Top 10 Risky Users */}
-          {riskyUsers.length > 0 && !userInfo && (
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
-              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
-                Top 10 Risky Users
-              </h3>
+          {/* Quick Access Section - Top Risky Users */}
+          <div className="bg-gray-900 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5 text-red-500" />
+              Top Risky Users
+            </h3>
+            
+            {loading ? (
               <div className="space-y-3">
-                {riskyUsers.map((user, index) => {
-                  const getRiskColor = (riskScore) => {
-                    if (riskScore >= 80) return 'text-red-400 bg-red-400/10 border-red-400/30';
-                    if (riskScore >= 60) return 'text-orange-400 bg-orange-400/10 border-orange-400/30';
-                    if (riskScore >= 40) return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30';
-                    return 'text-green-400 bg-green-400/10 border-green-400/30';
-                  };
-
-                  return (
-                    <button
-                      key={user.user_email}
-                      onClick={() => handleUserSelect(user.user_email)}
-                      className="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3">
-                            <span className="text-slate-400 text-sm">#{index + 1}</span>
-                            <div>
-                              <p className="text-white font-medium">{user.user_name}</p>
-                              <p className="text-blue-400 text-sm">{user.user_email}</p>
-                              <p className="text-slate-400 text-xs">{user.department} • {user.total_resources} resources</p>
-                            </div>
-                          </div>
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="animate-pulse flex space-x-3 p-3 bg-gray-800 rounded">
+                    <div className="rounded-full bg-gray-700 h-10 w-10"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : riskyUsers.length > 0 ? (
+              <div className="space-y-3">
+                {riskyUsers.map((user, index) => (
+                  <div 
+                    key={user.user_email} 
+                    className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 cursor-pointer transition-colors"
+                    onClick={() => handleUserClick(user.user_email)}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                          user.risk_score >= 80 ? 'bg-red-500 text-white' :
+                          user.risk_score >= 60 ? 'bg-yellow-500 text-black' :
+                          'bg-green-500 text-white'
+                        }`}>
+                          {index + 1}
                         </div>
-                        <div className="text-right">
-                          <div className={`px-3 py-1 rounded-full text-sm font-medium border ${getRiskColor(user.risk_score)}`}>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <p className="text-sm font-medium text-white truncate">
+                            {user.user_email}
+                          </p>
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            user.risk_score >= 80 ? 'bg-red-100 text-red-800' :
+                            user.risk_score >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                          }`}>
                             {user.risk_score}
-                          </div>
-                          <p className="text-slate-400 text-xs mt-1 max-w-32 truncate" title={user.risk_reason}>
-                            {user.risk_reason}
+                          </span>
+                        </div>
+                        <div className="mt-1">
+                          <p className="text-xs text-gray-400">
+                            {user.department || 'No Department'} • {user.risk_reason || 'Multiple risk factors'}
                           </p>
                         </div>
                       </div>
-                    </button>
-                  );
-                })}
+                      <div className="flex-shrink-0">
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8">
+                <ShieldCheck className="mx-auto h-12 w-12 text-gray-500" />
+                <p className="mt-2 text-sm text-gray-400">No risky users found</p>
+                <p className="text-xs text-gray-500">Import user data to see risk analytics</p>
+              </div>
+            )}
+          </div>
 
           {/* User Info & Graph */}
           {userInfo && (
