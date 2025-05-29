@@ -115,6 +115,10 @@ class CloudResource(BaseModel):
     region: Optional[str] = None
     account_id: Optional[str] = None
     
+    # Okta-specific application fields
+    application_name: Optional[str] = None  # For Okta applications
+    application_access_type: Optional[str] = None  # For Okta application access type
+    
     # Risk and analysis fields
     risk_level: RiskLevel = RiskLevel.LOW
     is_privileged: bool = False
