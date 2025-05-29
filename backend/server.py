@@ -1184,75 +1184,179 @@ async def get_provider_risk_analytics(provider: Optional[str] = None) -> Dict[st
     return analytics
 
 # JSON Import Functions
-async def process_json_import(json_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Process imported JSON data and save to database"""
+# Enhanced JSON Import Functions with User Aggregation
+async def process_unified_json_import(json_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Process unified JSON data supporting multiple providers and user aggregation"""
     try:
         # Validate JSON structure
         users_data = json_data.get("users", [])
         metadata = json_data.get("metadata", {})
         
-        processed_users = []
+        if not users_data:
+            raise HTTPException(status_code=400, detail="No users found in JSON data")
+        
+        # Track providers found in the data
+        providers_found = set()
+        user_aggregation = {}  # email -> accumulated user data
+        
+        # First pass: aggregate users by email across providers
         for user_data in users_data:
-            # Convert resources to CloudResource objects
+            user_email = user_data.get("user_email")
+            if not user_email:
+                continue
+                
+            # Track providers in resources
+            for resource in user_data.get("resources", []):
+                provider = resource.get("provider")
+                if provider:
+                    providers_found.add(provider)
+            
+            # Aggregate user data
+            if user_email not in user_aggregation:
+                user_aggregation[user_email] = {
+                    "user_email": user_email,
+                    "user_name": user_data.get("user_name", ""),
+                    "user_id": user_data.get("user_id"),
+                    "department": user_data.get("department"),
+                    "job_title": user_data.get("job_title"),
+                    "manager": user_data.get("manager"),
+                    "is_service_account": user_data.get("is_service_account", False),
+                    "resources": [],
+                    "groups": set(),
+                    "roles": set(),
+                    "data_source": "unified_json_import"
+                }
+            
+            # Merge resources
+            user_aggregation[user_email]["resources"].extend(user_data.get("resources", []))
+            
+            # Merge groups and roles
+            user_aggregation[user_email]["groups"].update(user_data.get("groups", []))
+            user_aggregation[user_email]["roles"].update(user_data.get("roles", []))
+            
+            # Update user info if more complete
+            if user_data.get("user_name") and not user_aggregation[user_email]["user_name"]:
+                user_aggregation[user_email]["user_name"] = user_data.get("user_name")
+            if user_data.get("department") and not user_aggregation[user_email]["department"]:
+                user_aggregation[user_email]["department"] = user_data.get("department")
+            if user_data.get("job_title") and not user_aggregation[user_email]["job_title"]:
+                user_aggregation[user_email]["job_title"] = user_data.get("job_title")
+        
+        # Validate that we have at least one valid provider
+        valid_providers = {"aws", "gcp", "azure", "okta", "github"}
+        if not providers_found.intersection(valid_providers):
+            raise HTTPException(
+                status_code=400, 
+                detail=f"No valid providers found. Expected one of: {', '.join(valid_providers)}"
+            )
+        
+        # Second pass: process aggregated users
+        processed_users = []
+        for email, user_data in user_aggregation.items():
+            # Convert sets back to lists
+            user_data["groups"] = list(user_data["groups"])
+            user_data["roles"] = list(user_data["roles"])
+            
+            # Process resources
             resources = []
-            for resource_data in user_data.get("resources", []):
+            for resource_data in user_data["resources"]:
+                # Validate provider
+                provider = resource_data.get("provider")
+                if provider not in valid_providers:
+                    logging.warning(f"Skipping resource with invalid provider: {provider}")
+                    continue
+                
                 # Handle datetime parsing for last_used field
                 if "last_used" in resource_data and resource_data["last_used"]:
                     try:
-                        # Parse ISO datetime string and convert to naive datetime
                         from dateutil import parser
                         dt = parser.parse(resource_data["last_used"])
-                        # Convert to naive datetime (remove timezone info)
                         resource_data["last_used"] = dt.replace(tzinfo=None)
                     except Exception as e:
                         logging.warning(f"Could not parse last_used datetime: {e}")
                         resource_data["last_used"] = None
                 
-                resource = CloudResource(**resource_data)
-                resources.append(resource)
+                # Set default values for missing fields
+                resource_data.setdefault("risk_level", "low")
+                resource_data.setdefault("is_privileged", False)
+                resource_data.setdefault("mfa_required", True)
+                
+                try:
+                    resource = CloudResource(**resource_data)
+                    resources.append(resource)
+                except Exception as e:
+                    logging.warning(f"Skipping invalid resource: {e}")
+                    continue
+            
+            if not resources:
+                logging.warning(f"No valid resources found for user {email}, skipping")
+                continue
             
             # Create UserAccess object
-            user_access = UserAccess(
-                user_email=user_data["user_email"],
-                user_name=user_data["user_name"],
-                user_id=user_data.get("user_id"),
-                department=user_data.get("department"),
-                job_title=user_data.get("job_title"),
-                manager=user_data.get("manager"),
-                is_service_account=user_data.get("is_service_account", False),
-                resources=resources,
-                groups=user_data.get("groups", []),
-                roles=user_data.get("roles", []),
-                data_source="json_import"
-            )
-            
-            # Perform risk analysis
-            user_access = analyze_user_access(user_access)
-            processed_users.append(user_access)
+            try:
+                user_access = UserAccess(
+                    user_email=user_data["user_email"],
+                    user_name=user_data["user_name"] or "Unknown User",
+                    user_id=user_data.get("user_id"),
+                    department=user_data.get("department"),
+                    job_title=user_data.get("job_title"),
+                    manager=user_data.get("manager"),
+                    is_service_account=user_data.get("is_service_account", False),
+                    resources=resources,
+                    groups=user_data["groups"],
+                    roles=user_data["roles"],
+                    data_source="unified_json_import"
+                )
+                
+                # Perform risk analysis
+                user_access = analyze_user_access(user_access)
+                processed_users.append(user_access)
+                
+            except Exception as e:
+                logging.error(f"Error creating UserAccess for {email}: {e}")
+                continue
         
-        # Save to database
+        if not processed_users:
+            raise HTTPException(status_code=400, detail="No valid users could be processed")
+        
+        # Save to database with upsert logic
+        total_inserted = 0
+        total_updated = 0
+        
         for user_access in processed_users:
-            # Check if user already exists
             existing_user = await db.user_access.find_one({"user_email": user_access.user_email})
             if existing_user:
-                # Update existing user
+                # Update existing user (merge strategy)
                 await db.user_access.replace_one(
                     {"user_email": user_access.user_email},
                     user_access.dict()
                 )
+                total_updated += 1
             else:
                 # Insert new user
                 await db.user_access.insert_one(user_access.dict())
+                total_inserted += 1
         
         return {
             "status": "success",
-            "imported_users": len(processed_users),
-            "metadata": metadata
+            "total_users_processed": len(processed_users),
+            "users_inserted": total_inserted,
+            "users_updated": total_updated,
+            "providers_found": list(providers_found),
+            "metadata": metadata,
+            "message": f"Successfully processed {len(processed_users)} users across {len(providers_found)} providers"
         }
     
+    except HTTPException:
+        raise
     except Exception as e:
-        logging.error(f"Error processing JSON import: {str(e)}")
+        logging.error(f"Error processing unified JSON import: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error processing JSON: {str(e)}")
+
+# Legacy function for backward compatibility
+async def process_json_import(json_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Legacy JSON import function - redirects to unified import"""
+    return await process_unified_json_import(json_data)
 
 # Enhanced sample data initialization
 async def init_sample_data():
