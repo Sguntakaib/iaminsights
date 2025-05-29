@@ -1889,6 +1889,213 @@ async def get_provider_sample(
         raise HTTPException(status_code=404, detail="Provider sample not found")
     return PROVIDER_SAMPLES[provider]
 
+@api_router.get("/providers/samples/unified/download")
+async def download_unified_sample(current_user: User = Depends(get_current_user)):
+    """Download a comprehensive unified sample JSON file"""
+    sample_data = PROVIDER_SAMPLES["unified"]["sample_format"]
+    
+    # Create a more comprehensive sample with multiple users
+    comprehensive_sample = {
+        "metadata": {
+            "import_date": "2024-12-19T10:30:00Z",
+            "source": "unified_audit",
+            "description": "Multi-cloud access audit data - Comprehensive Example",
+            "providers": ["aws", "gcp", "azure", "okta", "github"],
+            "aggregation_enabled": True,
+            "version": "1.0"
+        },
+        "users": [
+            # Example 1: DevOps Engineer with access across all platforms
+            {
+                "user_email": "devops@company.com",
+                "user_name": "Alex DevOps",
+                "department": "Engineering",
+                "job_title": "Senior DevOps Engineer",
+                "groups": ["engineering", "platform-team", "security-team", "devops"],
+                "roles": ["devops", "admin", "security-officer"],
+                "resources": [
+                    {
+                        "provider": "aws",
+                        "service": "S3",
+                        "resource_type": "bucket",
+                        "resource_name": "production-logs",
+                        "resource_arn": "arn:aws:s3:::production-logs",
+                        "access_type": "read",
+                        "region": "us-east-1",
+                        "account_id": "123456789012",
+                        "risk_level": "medium",
+                        "is_privileged": False,
+                        "mfa_required": True,
+                        "description": "Read access to production logs"
+                    },
+                    {
+                        "provider": "aws",
+                        "service": "EC2",
+                        "resource_type": "instance",
+                        "resource_name": "prod-web-*",
+                        "access_type": "admin",
+                        "region": "us-east-1",
+                        "account_id": "123456789012",
+                        "risk_level": "critical",
+                        "is_privileged": True,
+                        "mfa_required": True,
+                        "description": "Admin access to production web servers"
+                    },
+                    {
+                        "provider": "gcp",
+                        "service": "Compute Engine",
+                        "resource_type": "instance",
+                        "resource_name": "web-server-prod",
+                        "access_type": "admin",
+                        "region": "us-central1",
+                        "account_id": "company-prod-project",
+                        "risk_level": "high",
+                        "is_privileged": True,
+                        "mfa_required": True,
+                        "description": "Admin access to production GCP instances"
+                    },
+                    {
+                        "provider": "azure",
+                        "service": "Virtual Machines",
+                        "resource_type": "vm",
+                        "resource_name": "prod-vm-001",
+                        "access_type": "admin",
+                        "region": "East US",
+                        "account_id": "subscription-prod",
+                        "risk_level": "high",
+                        "is_privileged": True,
+                        "mfa_required": True,
+                        "description": "Admin access to Azure production VMs"
+                    },
+                    {
+                        "provider": "github",
+                        "service": "GitHub",
+                        "resource_type": "repository",
+                        "resource_name": "company/infrastructure",
+                        "access_type": "admin",
+                        "risk_level": "critical",
+                        "is_privileged": True,
+                        "mfa_required": True,
+                        "description": "Admin access to infrastructure repository",
+                        "permission_details": {
+                            "push": True,
+                            "pull": True,
+                            "admin": True,
+                            "maintain": True,
+                            "triage": True
+                        }
+                    },
+                    {
+                        "provider": "okta",
+                        "service": "Admin Console",
+                        "resource_type": "application",
+                        "resource_name": "Okta Admin",
+                        "access_type": "admin",
+                        "risk_level": "critical",
+                        "is_privileged": True,
+                        "mfa_required": True,
+                        "description": "Admin access to Okta console"
+                    }
+                ]
+            },
+            # Example 2: Developer with GitHub and AWS access
+            {
+                "user_email": "developer@company.com",
+                "user_name": "Sarah Developer",
+                "department": "Engineering",
+                "job_title": "Senior Software Engineer",
+                "groups": ["engineering", "backend-team"],
+                "roles": ["developer", "code-reviewer"],
+                "resources": [
+                    {
+                        "provider": "github",
+                        "service": "GitHub",
+                        "resource_type": "repository",
+                        "resource_name": "company/backend-api",
+                        "access_type": "write",
+                        "risk_level": "medium",
+                        "is_privileged": False,
+                        "mfa_required": True,
+                        "description": "Write access to backend API repository",
+                        "permission_details": {
+                            "push": True,
+                            "pull": True,
+                            "admin": False,
+                            "maintain": False,
+                            "triage": True
+                        }
+                    },
+                    {
+                        "provider": "aws",
+                        "service": "S3",
+                        "resource_type": "bucket",
+                        "resource_name": "dev-artifacts",
+                        "access_type": "write",
+                        "region": "us-east-1",
+                        "account_id": "123456789012",
+                        "risk_level": "low",
+                        "is_privileged": False,
+                        "mfa_required": True,
+                        "description": "Upload development artifacts"
+                    }
+                ]
+            },
+            # Example 3: Data Analyst with GCP and Okta access
+            {
+                "user_email": "analyst@company.com",
+                "user_name": "Mike DataAnalyst",
+                "department": "Data Science",
+                "job_title": "Senior Data Analyst",
+                "groups": ["data-team", "analytics"],
+                "roles": ["analyst", "data-viewer"],
+                "resources": [
+                    {
+                        "provider": "gcp",
+                        "service": "BigQuery",
+                        "resource_type": "dataset",
+                        "resource_name": "analytics_warehouse",
+                        "access_type": "read",
+                        "region": "us-central1",
+                        "account_id": "company-analytics-proj",
+                        "risk_level": "medium",
+                        "is_privileged": False,
+                        "mfa_required": True,
+                        "description": "Read access to analytics data warehouse"
+                    },
+                    {
+                        "provider": "okta",
+                        "service": "Tableau",
+                        "resource_type": "application",
+                        "resource_name": "Analytics Dashboard",
+                        "access_type": "read",
+                        "risk_level": "low",
+                        "is_privileged": False,
+                        "mfa_required": True,
+                        "description": "Access to analytics dashboards"
+                    }
+                ]
+            }
+        ]
+    }
+    
+    # Convert to JSON string for download
+    json_content = json.dumps(comprehensive_sample, indent=2)
+    
+    # Create streaming response for file download
+    def generate():
+        yield json_content
+    
+    headers = {
+        'Content-Disposition': 'attachment; filename="unified-cloud-access-sample.json"',
+        'Content-Type': 'application/json'
+    }
+    
+    return StreamingResponse(
+        io.BytesIO(json_content.encode()),
+        media_type="application/json",
+        headers=headers
+    )
+
 # Protected Cloud Access Data Endpoints (All require authentication)
 @api_router.get("/")
 async def root():
