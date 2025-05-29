@@ -405,7 +405,7 @@ PROVIDER_SAMPLES = {
     "okta": {
         "provider": "okta",
         "description": "Okta application access data with SSO applications and user permissions",
-        "required_fields": ["provider", "service", "resource_type", "resource_name", "access_type"],
+        "required_fields": ["provider", "service", "resource_type", "resource_name", "access_type", "application_name", "application_access_type"],
         "sample_format": {
             "metadata": {
                 "import_date": "2024-12-19T10:30:00Z",
@@ -425,10 +425,51 @@ PROVIDER_SAMPLES = {
                             "resource_type": "application",
                             "resource_name": "Sales CRM",
                             "access_type": "admin",
+                            "application_name": "Salesforce Production",
+                            "application_access_type": "full_admin",
                             "risk_level": "medium",
                             "is_privileged": True,
                             "mfa_required": True,
                             "description": "Admin access to Salesforce CRM"
+                        },
+                        {
+                            "provider": "okta",
+                            "service": "Slack",
+                            "resource_type": "application",
+                            "resource_name": "Team Communication",
+                            "access_type": "user",
+                            "application_name": "Slack Enterprise",
+                            "application_access_type": "workspace_member",
+                            "risk_level": "low",
+                            "is_privileged": False,
+                            "mfa_required": True,
+                            "description": "Standard user access to Slack workspace"
+                        },
+                        {
+                            "provider": "okta",
+                            "service": "GitHub",
+                            "resource_type": "application",
+                            "resource_name": "Code Repository Access",
+                            "access_type": "admin",
+                            "application_name": "GitHub Enterprise",
+                            "application_access_type": "org_admin",
+                            "risk_level": "high",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Organization admin access to GitHub"
+                        },
+                        {
+                            "provider": "okta",
+                            "service": "AWS SSO",
+                            "resource_type": "application",
+                            "resource_name": "Cloud Platform Access",
+                            "access_type": "admin",
+                            "application_name": "AWS Single Sign-On",
+                            "application_access_type": "power_user",
+                            "risk_level": "critical",
+                            "is_privileged": True,
+                            "mfa_required": True,
+                            "description": "Power user access to AWS through SSO"
                         }
                     ]
                 }
