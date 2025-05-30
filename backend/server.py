@@ -2841,7 +2841,7 @@ async def get_top_risky_users(
                 "risk_reason": primary_risk_reason,
                 "admin_access_count": admin_access_count,
                 "cross_provider_admin": analyzed_user.cross_provider_admin,
-                "providers": list(set([r.provider for r in user_access.resources])),
+                "providers": list(set([r.provider.value if hasattr(r.provider, 'value') else str(r.provider) for r in user_access.resources])),
                 "total_resources": len(user_access.resources)
             })
         
