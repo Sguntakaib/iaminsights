@@ -1573,7 +1573,7 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
                 id=service_node_id,
                 label=service,
                 type="service",
-                provider=provider,
+                provider=provider,  # provider is already a string now
                 color=provider_colors.get(provider, "#6C757D")
             )
             nodes.append(service_node)
