@@ -233,7 +233,7 @@ const CloudAccessVisualizer = () => {
         return;
       }
       
-      const response = await axios.get(`${API}/users/risky?limit=10`, {
+      const response = await axios.get(`${API}/users/risky?limit=5`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Risky users response:', response.data);
