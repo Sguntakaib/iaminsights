@@ -129,10 +129,10 @@ User reported that "for some data points it still not mapping users to providers
 
 ## Root Cause Analysis ✅ FIXED
 
-**Issue Identified:** Authentication token mismatch between components
-- **AuthContext** stores token as `'token'` in localStorage
-- **CloudAccessVisualizer** was looking for `'auth_token'` in localStorage  
-- This caused authenticated users to appear as unauthenticated to the risky users component
+**Issue Identified:** CloudProvider enum serialization problem
+- **Problem**: The `CloudProvider` enum was being serialized as `"CloudProvider.AZURE"` instead of `"azure"`
+- **Impact**: Provider node IDs were malformed (`provider-CloudProvider.AZURE` vs `provider-azure`)
+- **Result**: Frontend graph rendering couldn't properly connect nodes due to ID mismatches
 
 ## Implementation Completed ✅
 
