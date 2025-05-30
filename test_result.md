@@ -125,7 +125,7 @@ Overall, the core functionality for graph connectivity and risky users is workin
 # Test Result Summary
 
 ## Core Problem Statement 
-User reported that "Top risky users are not rendering" on the Search/Visualize page, showing "No High-Risk Users Found" instead of displaying users with risk score > 90%. The requirement was to ensure the top 5 risky users are always displayed and not keep that place empty.
+User reported that "for some data points it still not mapping users to providers" with specific example of "natalie60@gonzalez.org" showing disconnected components in the graph visualization. Additionally, the Top 5 Risky Users UI was taking too much screen space.
 
 ## Root Cause Analysis ✅ FIXED
 
