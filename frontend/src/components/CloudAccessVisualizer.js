@@ -43,7 +43,7 @@ const CloudAccessVisualizer = () => {
   const [importResult, setImportResult] = useState(null);
   const cyRef = useRef();
 
-  // Cytoscape layout and styling
+  // Cytoscape layout and styling with improved edge visibility
   const cytoscapeStylesheet = [
     {
       selector: 'node',
@@ -72,7 +72,8 @@ const CloudAccessVisualizer = () => {
         'width': 120,
         'height': 80,
         'background-color': '#2563eb',
-        'border-color': '#1d4ed8'
+        'border-color': '#1d4ed8',
+        'border-width': 3
       }
     },
     {
@@ -82,7 +83,8 @@ const CloudAccessVisualizer = () => {
         'width': 100,
         'height': 70,
         'font-size': '14px',
-        'border-color': '#374151'
+        'border-color': '#374151',
+        'border-width': 3
       }
     },
     {
@@ -104,19 +106,74 @@ const CloudAccessVisualizer = () => {
       }
     },
     {
+      selector: 'node[type="application"]',
+      style: {
+        'shape': 'round-rectangle',
+        'width': 85,
+        'height': 60,
+        'font-size': '11px',
+        'background-color': '#007DC1'
+      }
+    },
+    {
+      selector: 'node[type="access"]',
+      style: {
+        'shape': 'ellipse',
+        'width': 65,
+        'height': 45,
+        'font-size': '9px'
+      }
+    },
+    // Enhanced edge styling
+    {
       selector: 'edge',
       style: {
-        'width': 3,
+        'width': 4,                    // Increased width for better visibility
         'line-color': '#6b7280',
         'target-arrow-color': '#6b7280',
         'target-arrow-shape': 'triangle',
         'curve-style': 'bezier',
-        'arrow-scale': 1.2,
+        'arrow-scale': 1.5,           // Larger arrows
         'label': 'data(label)',
-        'font-size': '10px',
-        'color': '#374151',
+        'font-size': '11px',          // Larger font for edge labels
+        'color': '#f3f4f6',           // Better contrast for labels
         'text-rotation': 'autorotate',
-        'text-margin-y': -10
+        'text-margin-y': -12,
+        'text-outline-width': 1,
+        'text-outline-color': '#000',
+        'opacity': 0.8
+      }
+    },
+    // Special styling for user-to-provider edges (more prominent)
+    {
+      selector: 'edge[source*="user-"]',
+      style: {
+        'width': 6,                    // Thicker for user connections
+        'line-color': '#3b82f6',       // Blue for user connections
+        'target-arrow-color': '#3b82f6',
+        'opacity': 1.0,               // Full opacity
+        'font-weight': 'bold',
+        'color': '#ffffff'
+      }
+    },
+    // Provider-to-service edges
+    {
+      selector: 'edge[source*="provider-"]',
+      style: {
+        'width': 4,
+        'line-color': '#10b981',       // Green for provider connections
+        'target-arrow-color': '#10b981',
+        'opacity': 0.9
+      }
+    },
+    // Service-to-resource edges
+    {
+      selector: 'edge[source*="service-"]',
+      style: {
+        'width': 3,
+        'line-color': '#f59e0b',       // Orange for service connections
+        'target-arrow-color': '#f59e0b',
+        'opacity': 0.8
       }
     },
     {
@@ -124,6 +181,23 @@ const CloudAccessVisualizer = () => {
       style: {
         'border-width': 4,
         'border-color': '#fbbf24'
+      }
+    },
+    // Hover effects
+    {
+      selector: 'node:active',
+      style: {
+        'overlay-color': '#fbbf24',
+        'overlay-padding': 10,
+        'overlay-opacity': 0.25
+      }
+    },
+    {
+      selector: 'edge:active',
+      style: {
+        'overlay-color': '#fbbf24',
+        'overlay-padding': 3,
+        'overlay-opacity': 0.25
       }
     }
   ];
