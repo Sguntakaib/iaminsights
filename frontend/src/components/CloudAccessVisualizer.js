@@ -224,7 +224,7 @@ const CloudAccessVisualizer = () => {
 
   const fetchRiskyUsers = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token'); // Fixed: was 'auth_token', should be 'token'
       console.log('Fetching risky users with token:', token ? 'Token found' : 'No token');
       
       if (!token) {
