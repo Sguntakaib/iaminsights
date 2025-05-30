@@ -499,7 +499,28 @@ const CloudAccessVisualizer = () => {
 
   const handleUserSelect = (email) => {
     setSearchEmail(email);
+    setSearchType("user");
     handleUserSearch();
+  };
+
+  // Auto-refresh risky users when component mounts and when import happens
+  useEffect(() => {
+    const refreshData = async () => {
+      await fetchRiskyUsers();
+    };
+    
+    // Refresh on mount and then every 30 seconds
+    refreshData();
+    const interval = setInterval(refreshData, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Refresh risky users after import
+  const handleFileImportWithRefresh = async () => {
+    await handleFileImport();
+    // Refresh risky users after successful import
+    setTimeout(fetchRiskyUsers, 1000);
   };
 
   return (
