@@ -1530,9 +1530,11 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
     # Group resources by provider
     provider_resources = {}
     for resource in user_access.resources:
-        if resource.provider not in provider_resources:
-            provider_resources[resource.provider] = []
-        provider_resources[resource.provider].append(resource)
+        # Convert provider enum to string to avoid serialization issues
+        provider_str = str(resource.provider) if hasattr(resource.provider, 'value') else resource.provider
+        if provider_str not in provider_resources:
+            provider_resources[provider_str] = []
+        provider_resources[provider_str].append(resource)
     
     # Always create direct user-to-provider connections first
     for provider, resources in provider_resources.items():
