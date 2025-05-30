@@ -122,6 +122,18 @@ Overall, the core functionality for graph connectivity and risky users is workin
 
 ---
 
+## Cloud Access Visualizer Frontend Testing
+
+### Status History
+- agent: "testing"
+- comment: "Attempted to test graph connectivity for multiple users but encountered issues with the login process. The application is running in a preview environment (https://e65627c5-3045-4759-ab88-5c278245a53b.preview.emergentagent.com) and despite multiple attempts using different approaches, we were unable to successfully log in to access the dashboard and test the graph visualization."
+
+### Agent Communication
+- agent: "testing"
+- message: "Unable to complete the graph connectivity testing due to login issues in the preview environment. The login button is visible on the landing page, but clicking it and attempting to log in with the provided credentials (adminn@iamsharan.com / Testing@123) does not successfully navigate to the dashboard. This may be due to environment configuration issues or temporary service unavailability. Recommend checking the application deployment status and potentially testing in a different environment."
+
+---
+
 # Test Result Summary
 
 ## Core Problem Statement 
