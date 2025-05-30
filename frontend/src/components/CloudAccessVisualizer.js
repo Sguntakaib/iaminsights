@@ -505,18 +505,23 @@ const CloudAccessVisualizer = () => {
     handleUserSearch();
   };
 
-  // Auto-refresh risky users when component mounts and when import happens
+  // Auto-refresh risky users when component mounts and when authentication changes
   useEffect(() => {
     const refreshData = async () => {
-      await fetchRiskyUsers();
+      if (isAuthenticated && token) {
+        await fetchRiskyUsers();
+      }
     };
     
-    // Refresh on mount and then every 30 seconds
+    // Refresh on mount and authentication changes
     refreshData();
-    const interval = setInterval(refreshData, 30000);
     
-    return () => clearInterval(interval);
-  }, []);
+    // Set up interval only if authenticated
+    if (isAuthenticated && token) {
+      const interval = setInterval(refreshData, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, token]);
 
   // Refresh risky users after import
   const handleFileImportWithRefresh = async () => {
