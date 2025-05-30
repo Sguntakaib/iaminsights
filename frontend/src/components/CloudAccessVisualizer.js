@@ -696,6 +696,22 @@ const CloudAccessVisualizer = () => {
                   </div>
                 ))}
               </div>
+            ) : !isAuthenticated ? (
+              <div className="text-center py-12">
+                <div className="bg-slate-700/30 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                  <User className="h-12 w-12 text-slate-400" />
+                </div>
+                <h4 className="text-lg font-medium text-white mb-2">Authentication Required</h4>
+                <p className="text-slate-400 mb-4">Please log in to view risky users analytics</p>
+                
+                <button
+                  onClick={() => window.location.href = '/login'}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Log In
+                </button>
+              </div>
             ) : riskyUsers.length > 0 ? (
               <div className="space-y-4">
                 {riskyUsers.slice(0, 5).map((user, index) => (
