@@ -1205,7 +1205,7 @@ const CloudAccessVisualizer = () => {
 
             {/* Upload Button */}
             <button
-              onClick={handleFileImport}
+              onClick={handleFileImportWithRefresh}
               disabled={!importFile || loading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white py-3 rounded-lg font-semibold transition-colors duration-200 mb-6"
             >
