@@ -135,18 +135,18 @@ const CloudAccessVisualizer = () => {
         quality: 'default',
         nodeDimensionsIncludeLabels: true,
         fit: true,
-        padding: 40,
+        padding: 50,
         randomize: false,
-        nodeRepulsion: 8000,
-        idealEdgeLength: 150,
+        nodeRepulsion: 12000, // Increased to spread nodes better
+        idealEdgeLength: 200,   // Increased for better edge visibility
         edgeElasticity: 0.45,
         nestingFactor: 0.1,
-        gravity: 0.15,
-        numIter: 3000,
+        gravity: 0.25,         // Increased to keep graph centered
+        numIter: 4000,         // More iterations for better layout
         tile: false,
         animate: 'end',
-        animationDuration: 1500,
-        componentSpacing: 80,
+        animationDuration: 2000,
+        componentSpacing: 120,  // Better spacing between components
         coolingFactor: 0.99
       },
       'circle': {
@@ -156,7 +156,7 @@ const CloudAccessVisualizer = () => {
         avoidOverlap: true,
         animate: true,
         animationDuration: 800,
-        spacingFactor: 2.0
+        spacingFactor: 2.5  // Increased spacing
       },
       'grid': {
         name: 'grid',
@@ -165,15 +165,15 @@ const CloudAccessVisualizer = () => {
         avoidOverlap: true,
         animate: true,
         animationDuration: 800,
-        spacingFactor: 1.5,
+        spacingFactor: 2.0,  // Increased spacing
         columns: undefined
       },
       'breadthfirst': {
         name: 'breadthfirst',
         fit: true,
-        directed: false,
+        directed: true,      // Changed to show direction
         padding: 50,
-        spacingFactor: 2.5,
+        spacingFactor: 3.0,  // Increased spacing
         avoidOverlap: true,
         animate: true,
         animationDuration: 800,
@@ -187,10 +187,20 @@ const CloudAccessVisualizer = () => {
         sweep: undefined,
         clockwise: true,
         equidistant: false,
-        minNodeSpacing: 50,
+        minNodeSpacing: 80,   // Increased spacing
         avoidOverlap: true,
         animate: true,
-        animationDuration: 800
+        animationDuration: 800,
+        concentric: function(node) {
+          // Put user at center, providers next, then services, then resources
+          if (node.data('type') === 'user') return 4;
+          if (node.data('type') === 'provider') return 3;
+          if (node.data('type') === 'service') return 2;
+          return 1;
+        },
+        levelWidth: function(nodes) {
+          return nodes.maxDegree() / 2;
+        }
       }
     };
     
