@@ -1494,7 +1494,7 @@ async def init_sample_data():
 
 # Helper function to generate graph data
 def generate_graph_data(user_access: UserAccess) -> GraphData:
-    """Generate graph nodes and edges for visualization"""
+    """Generate graph nodes and edges for visualization with improved connectivity"""
     nodes = []
     edges = []
     
@@ -1503,7 +1503,8 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
         "aws": "#FF9900",
         "gcp": "#4285F4", 
         "azure": "#0078D4",
-        "okta": "#007DC1"
+        "okta": "#007DC1",
+        "github": "#333333"
     }
     
     # Access type colors
@@ -1517,10 +1518,10 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
         "delete": "#E83E8C"
     }
     
-    # User node (center)
+    # User node (center) - Always create user node
     user_node = GraphNode(
         id=f"user-{user_access.user_email}",
-        label=user_access.user_email,
+        label=user_access.user_name or user_access.user_email.split('@')[0],
         type="user",
         color="#6C757D"
     )
@@ -1533,7 +1534,7 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
             provider_resources[resource.provider] = []
         provider_resources[resource.provider].append(resource)
     
-    # Create provider nodes and connections
+    # Always create direct user-to-provider connections first
     for provider, resources in provider_resources.items():
         provider_node_id = f"provider-{provider}"
         provider_node = GraphNode(
@@ -1545,23 +1546,25 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
         )
         nodes.append(provider_node)
         
-        # Edge from user to provider
+        # CRITICAL: Always create edge from user to provider
         provider_edge = GraphEdge(
             id=f"edge-user-{provider}",
             source=user_node.id,
             target=provider_node_id,
-            label="has access"
+            label=f"has {len(resources)} resource(s)",
+            weight=2  # Make user-provider edges stronger
         )
         edges.append(provider_edge)
         
         # Group resources by service within each provider
         service_resources = {}
         for resource in resources:
-            if resource.service not in service_resources:
-                service_resources[resource.service] = []
-            service_resources[resource.service].append(resource)
+            service_key = resource.service or "General"
+            if service_key not in service_resources:
+                service_resources[service_key] = []
+            service_resources[service_key].append(resource)
         
-        # Create service nodes
+        # Create service nodes and connections
         for service, service_resources_list in service_resources.items():
             service_node_id = f"service-{provider}-{service.replace(' ', '-').lower()}"
             service_node = GraphNode(
@@ -1655,6 +1658,26 @@ def generate_graph_data(user_access: UserAccess) -> GraphData:
                     )
                     edges.append(resource_edge)
     
+    # Ensure we have at least user and provider nodes
+    if len(nodes) < 2:
+        # Add a placeholder node if somehow no resources exist
+        placeholder_node = GraphNode(
+            id="placeholder-node",
+            label="No Resources",
+            type="placeholder",
+            color="#6C757D"
+        )
+        nodes.append(placeholder_node)
+        
+        placeholder_edge = GraphEdge(
+            id="edge-user-placeholder",
+            source=user_node.id,
+            target="placeholder-node",
+            label="no access"
+        )
+        edges.append(placeholder_edge)
+    
+    logging.info(f"Generated graph with {len(nodes)} nodes and {len(edges)} edges for user {user_access.user_email}")
     return GraphData(nodes=nodes, edges=edges)
 
 # API Routes
