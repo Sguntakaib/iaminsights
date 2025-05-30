@@ -134,10 +134,10 @@ The user requested two main enhancements to the Cloud Access Visualizer:
 - Sample data includes Okta resources with application fields
 - Standard providers maintain existing resource structure
 - **Risky Users Endpoint** (/api/users/risky) successfully tested:
-  - Returns users with risk score ≥ 90%
-  - Users are sorted by risk score (highest first)
-  - Provider information is correctly included
-  - Limit parameter works as expected
+  - Returns top N users sorted by risk score (regardless of threshold)
+  - Limit parameter works correctly with values 1, 3, 5, and 10
+  - Response includes all required fields: user_email, user_name, department, risk_score, risk_reason, providers, total_resources
+  - Users are properly sorted by risk score in descending order
 - **Risk Score Calculation** verified:
   - Admin users have high risk scores (100%)
   - Cross-provider admin access increases risk score
@@ -148,7 +148,10 @@ The user requested two main enhancements to the Cloud Access Visualizer:
   - JWT token works for protected endpoints
   - Unauthenticated requests are properly rejected
 
-### ⚠️ Minor Issues:
+### ⚠️ Issues:
+- User search endpoint (/api/search/{email}) returns data but is missing expected 'user' and 'resources' fields
+- Analytics endpoint (/api/analytics) returns data but is missing some required fields
+- Providers endpoint (/api/providers) returns a 500 error with message "Error retrieving statistics"
 - Import functionality (/api/import/json) requires specific provider format
 - No dedicated health endpoint found, but API responds correctly to requests
 
