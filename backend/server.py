@@ -2338,11 +2338,12 @@ async def get_provider_statistics(current_user: User = Depends(get_current_user)
             user_providers = set()
             
             for resource in user_access.resources:
-                provider = resource.provider
-                if provider not in user_providers:
-                    stats["providers"][provider]["users"] += 1
-                    user_providers.add(provider)
-                stats["providers"][provider]["resources"] += 1
+                # Convert provider enum to string to avoid dictionary key issues
+                provider_str = resource.provider.value if hasattr(resource.provider, 'value') else str(resource.provider)
+                if provider_str not in user_providers:
+                    stats["providers"][provider_str]["users"] += 1
+                    user_providers.add(provider_str)
+                stats["providers"][provider_str]["resources"] += 1
         
         return stats
     except Exception as e:
