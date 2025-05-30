@@ -72,6 +72,27 @@ Completed comprehensive backend testing of the Cloud Access Visualizer. All crit
 
 The backend implementation meets all the requirements specified in the review request. No critical issues were found.
 
+### Testing Agent (2025-05-30):
+Completed additional backend testing of the Cloud Access Visualizer with focus on the updated risky users endpoint:
+
+1. **Risky Users Endpoint** (/api/users/risky):
+   - Successfully returns top N users sorted by risk score (regardless of threshold)
+   - Limit parameter works correctly with values 1, 3, 5, and 10
+   - Response includes all required fields: user_email, user_name, department, risk_score, risk_reason, providers, total_resources
+   - Users are properly sorted by risk score in descending order
+
+2. **Authentication Flow**:
+   - Login with admin credentials (adminn@iamsharan.com / Testing@123) works correctly
+   - JWT token is returned and can be used for protected endpoints
+   - Protected endpoints reject requests without valid token
+
+3. **Integration Testing Issues**:
+   - User search endpoint (/api/search/{email}) returns data but is missing expected 'user' and 'resources' fields
+   - Analytics endpoint (/api/analytics) returns data but is missing some required fields
+   - Providers endpoint (/api/providers) returns a 500 error with message "Error retrieving statistics"
+
+Overall, the risky users functionality is working correctly, but there are some issues with the other integration endpoints that should be addressed.
+
 ---
 
 # Test Result Summary
