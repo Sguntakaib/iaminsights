@@ -2329,7 +2329,8 @@ async def get_provider_statistics(current_user: User = Depends(get_current_user)
                 "aws": {"users": 0, "resources": 0},
                 "gcp": {"users": 0, "resources": 0},
                 "azure": {"users": 0, "resources": 0},
-                "okta": {"users": 0, "resources": 0}
+                "okta": {"users": 0, "resources": 0},
+                "github": {"users": 0, "resources": 0}
             }
         }
         
@@ -2340,6 +2341,11 @@ async def get_provider_statistics(current_user: User = Depends(get_current_user)
             for resource in user_access.resources:
                 # Convert provider enum to string to avoid dictionary key issues
                 provider_str = resource.provider.value if hasattr(resource.provider, 'value') else str(resource.provider)
+                
+                # Initialize provider in stats if not present (for dynamic providers)
+                if provider_str not in stats["providers"]:
+                    stats["providers"][provider_str] = {"users": 0, "resources": 0}
+                
                 if provider_str not in user_providers:
                     stats["providers"][provider_str]["users"] += 1
                     user_providers.add(provider_str)
