@@ -1174,7 +1174,7 @@ async def get_provider_risk_analytics(provider: Optional[str] = None) -> Dict[st
         
         # Filter by provider if specified
         if provider:
-            user_resources = [r for r in user_access.resources if r.provider == provider]
+            user_resources = [r for r in user_access.resources if (r.provider.value if hasattr(r.provider, 'value') else str(r.provider)) == provider]
             if not user_resources:
                 continue
             user_access.resources = user_resources
