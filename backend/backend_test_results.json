@@ -1,0 +1,57 @@
+{
+  "test_date": "2025-05-31",
+  "test_summary": {
+    "passed": 4,
+    "failed": 2,
+    "total": 6
+  },
+  "tests": [
+    {
+      "name": "Authentication - Login",
+      "passed": true,
+      "details": "Successfully authenticated and received JWT token"
+    },
+    {
+      "name": "Authentication Required",
+      "passed": true,
+      "details": "All endpoints properly require authentication"
+    },
+    {
+      "name": "Invalid Token Handling",
+      "passed": false,
+      "details": "Some endpoints don't reject invalid tokens: {'/users/risky?limit=5': False, '/search/john.doe@example.com': False}"
+    },
+    {
+      "name": "Edge Case - No Resources",
+      "passed": false,
+      "details": "Empty graph for non-existent user"
+    },
+    {
+      "name": "Risky Users - Limit 5",
+      "passed": true,
+      "details": "Returned 5 users, properly sorted with all required fields. Top risk score: 100.0"
+    },
+    {
+      "name": "User Search - Graph Connectivity",
+      "passed": true,
+      "details": "Graph has proper connectivity: 10 nodes, 9 edges, 3 user-provider connections, 3 provider-service connections, 3 service-resource connections"
+    }
+  ],
+  "risky_user_sample": {
+    "user_email": "andrewwatts@rivera.info",
+    "user_name": "Jon Baker",
+    "risk_score": 100.0,
+    "department": "Sales",
+    "risk_reason": "2 administrative access grants",
+    "providers": ["gcp", "aws", "azure"],
+    "total_resources": 3
+  },
+  "graph_connectivity": {
+    "nodes": 10,
+    "edges": 9,
+    "user_provider_connections": 3,
+    "provider_service_connections": 3,
+    "service_resource_connections": 3,
+    "disconnected_nodes": 0
+  }
+}
