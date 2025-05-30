@@ -969,7 +969,7 @@ def calculate_comprehensive_risk_score(user_access: UserAccess) -> RiskAnalysisR
     # 1. Basic access pattern risks
     admin_count = sum(1 for r in user_access.resources if r.access_type == AccessType.ADMIN)
     privileged_count = sum(1 for r in user_access.resources if r.is_privileged)
-    providers = set(r.provider for r in user_access.resources)
+    providers = set(r.provider.value if hasattr(r.provider, 'value') else str(r.provider) for r in user_access.resources)
     
     # Admin access risk
     admin_risk = admin_count * 12.0
