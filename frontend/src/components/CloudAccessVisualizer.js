@@ -665,65 +665,64 @@ const CloudAccessVisualizer = () => {
             </div>
           )}
 
-          {/* Quick Access Section - Top 5 Risky Users */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white flex items-center">
-                <AlertTriangle className="mr-3 h-6 w-6 text-red-500" />
+          {/* Quick Access Section - Top 5 Risky Users (Compact Design) */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white flex items-center">
+                <AlertTriangle className="mr-2 h-5 w-5 text-red-500" />
                 Top 5 Risky Users
               </h3>
               <button
                 onClick={fetchRiskyUsers}
-                className="flex items-center px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                className="flex items-center px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition-colors duration-200"
                 title="Refresh risky users"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
+                <RefreshCw className="w-3 h-3 mr-1" />
                 Refresh
               </button>
             </div>
             
             {loading ? (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="animate-pulse flex items-center space-x-4 p-4 bg-slate-700/30 rounded-lg">
-                    <div className="rounded-full bg-slate-600 h-12 w-12"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-5 bg-slate-600 rounded w-3/4"></div>
-                      <div className="h-4 bg-slate-600 rounded w-1/2"></div>
-                      <div className="h-3 bg-slate-600 rounded w-2/3"></div>
+                  <div key={i} className="animate-pulse flex items-center space-x-3 p-3 bg-slate-700/30 rounded-lg">
+                    <div className="rounded-lg bg-slate-600 h-8 w-8"></div>
+                    <div className="flex-1 space-y-1">
+                      <div className="h-4 bg-slate-600 rounded w-3/4"></div>
+                      <div className="h-3 bg-slate-600 rounded w-1/2"></div>
                     </div>
-                    <div className="h-8 bg-slate-600 rounded w-16"></div>
+                    <div className="h-6 bg-slate-600 rounded w-12"></div>
                   </div>
                 ))}
               </div>
             ) : !isAuthenticated ? (
-              <div className="text-center py-12">
-                <div className="bg-slate-700/30 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
-                  <User className="h-12 w-12 text-slate-400" />
+              <div className="text-center py-6">
+                <div className="bg-slate-700/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                  <User className="h-8 w-8 text-slate-400" />
                 </div>
-                <h4 className="text-lg font-medium text-white mb-2">Authentication Required</h4>
-                <p className="text-slate-400 mb-4">Please log in to view risky users analytics</p>
+                <h4 className="text-sm font-medium text-white mb-2">Authentication Required</h4>
+                <p className="text-xs text-slate-400 mb-3">Please log in to view risky users</p>
                 
                 <button
                   onClick={() => window.location.href = '/login'}
-                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-colors duration-200"
                 >
-                  <User className="w-4 h-4 mr-2" />
+                  <User className="w-3 h-3 mr-1" />
                   Log In
                 </button>
               </div>
             ) : riskyUsers.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {riskyUsers.slice(0, 5).map((user, index) => (
                   <div 
                     key={user.user_email} 
-                    className="group flex items-center justify-between p-5 bg-slate-700/30 hover:bg-slate-600/40 rounded-lg border border-slate-600 hover:border-slate-500 cursor-pointer transition-all duration-200 transform hover:-translate-y-0.5"
+                    className="group flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-600/40 rounded-lg border border-slate-600 hover:border-slate-500 cursor-pointer transition-all duration-200"
                     onClick={() => handleUserSelect(user.user_email)}
                   >
-                    <div className="flex items-center space-x-4 flex-1">
-                      {/* Risk Rank Badge */}
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      {/* Risk Rank Badge - Smaller */}
                       <div className="flex-shrink-0">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shadow-lg ${
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-md ${
                           user.risk_score >= 95 ? 'bg-gradient-to-r from-red-600 to-red-500 text-white' :
                           user.risk_score >= 90 ? 'bg-gradient-to-r from-orange-600 to-red-500 text-white' :
                           user.risk_score >= 80 ? 'bg-gradient-to-r from-yellow-600 to-orange-500 text-white' :
@@ -733,13 +732,13 @@ const CloudAccessVisualizer = () => {
                         </div>
                       </div>
 
-                      {/* User Information */}
+                      {/* User Information - More Compact */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 mb-1">
-                          <h4 className="text-lg font-semibold text-white truncate group-hover:text-blue-300 transition-colors">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h4 className="text-sm font-semibold text-white truncate group-hover:text-blue-300 transition-colors">
                             {user.user_name || user.user_email.split('@')[0]}
                           </h4>
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold shadow-sm ${
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold shadow-sm ${
                             user.risk_score >= 95 ? 'bg-red-500 text-white' :
                             user.risk_score >= 90 ? 'bg-orange-500 text-white' :
                             user.risk_score >= 80 ? 'bg-yellow-500 text-black' :
@@ -749,64 +748,62 @@ const CloudAccessVisualizer = () => {
                           </span>
                         </div>
                         
-                        <p className="text-slate-300 text-sm mb-2 truncate">
-                          {user.user_email}
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 text-sm">
-                          <div className="flex items-center space-x-2">
-                            <User className="w-4 h-4 text-slate-400" />
-                            <span className="text-slate-400">
-                              {user.department || 'No Department'}
+                        <div className="flex items-center space-x-3 text-xs">
+                          <div className="flex items-center space-x-1 text-slate-400">
+                            <User className="w-3 h-3" />
+                            <span className="truncate max-w-20">
+                              {user.department || 'No Dept'}
                             </span>
                           </div>
                           
-                          <div className="flex items-center space-x-2">
-                            <Shield className="w-4 h-4 text-slate-400" />
-                            <span className="text-slate-400 truncate">
-                              {user.risk_reason || 'Multiple risk factors'}
+                          <div className="flex items-center space-x-1 text-slate-400">
+                            <Shield className="w-3 h-3" />
+                            <span className="truncate max-w-24">
+                              {user.risk_reason || 'Multiple risks'}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center space-x-1">
+                            <span className="text-slate-500">•</span>
+                            <div className="flex space-x-0.5">
+                              {user.providers && user.providers.slice(0, 3).map((provider, idx) => (
+                                <div key={idx} className="w-3 h-3">
+                                  {getProviderIcon(provider)}
+                                </div>
+                              ))}
+                              {user.providers && user.providers.length > 3 && (
+                                <span className="text-xs text-slate-500">+{user.providers.length - 3}</span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-500">
+                              ({user.total_resources || 0})
                             </span>
                           </div>
                         </div>
-                        
-                        {/* Providers */}
-                        <div className="flex items-center space-x-2 mt-2">
-                          <span className="text-xs text-slate-500">Providers:</span>
-                          <div className="flex space-x-1">
-                            {user.providers && user.providers.map((provider, idx) => (
-                              <div key={idx} className="w-5 h-5">
-                                {getProviderIcon(provider)}
-                              </div>
-                            ))}
-                          </div>
-                          <span className="text-xs text-slate-500">
-                            • {user.total_resources || 0} resources
-                          </span>
-                        </div>
                       </div>
 
-                      {/* Action Arrow */}
+                      {/* Action Arrow - Smaller */}
                       <div className="flex-shrink-0">
-                        <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-blue-400 transition-colors" />
+                        <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="bg-slate-700/30 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
-                  <ShieldCheck className="h-12 w-12 text-slate-400" />
+              <div className="text-center py-6">
+                <div className="bg-slate-700/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                  <ShieldCheck className="h-8 w-8 text-slate-400" />
                 </div>
-                <h4 className="text-lg font-medium text-white mb-2">No High-Risk Users Found</h4>
-                <p className="text-slate-400 mb-1">No users with risk score &gt; 90%</p>
-                <p className="text-sm text-slate-500">Import user data to see risk analytics, or check back after system updates</p>
+                <h4 className="text-sm font-medium text-white mb-2">No High-Risk Users Found</h4>
+                <p className="text-xs text-slate-400 mb-1">No users with risk score &gt; 90%</p>
+                <p className="text-xs text-slate-500 mb-3">Import user data or check back later</p>
                 
                 <button
                   onClick={fetchRiskyUsers}
-                  className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-colors duration-200"
                 >
-                  <RefreshCw className="w-4 h-4 mr-2" />
+                  <RefreshCw className="w-3 h-3 mr-1" />
                   Check Again
                 </button>
               </div>
