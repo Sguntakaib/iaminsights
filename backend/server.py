@@ -893,7 +893,7 @@ def calculate_privilege_escalation_risk(user_access: UserAccess) -> tuple[float,
     # Group resources by provider-service
     services_access = {}
     for resource in user_access.resources:
-        key = f"{resource.provider}-{resource.service}"
+        key = f"{resource.provider.value if hasattr(resource.provider, 'value') else str(resource.provider)}-{resource.service}"
         if key not in services_access:
             services_access[key] = []
         services_access[key].append(resource)
