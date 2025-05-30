@@ -226,11 +226,11 @@ const CloudAccessVisualizer = () => {
 
   const fetchRiskyUsers = async () => {
     try {
-      const token = localStorage.getItem('token'); // Fixed: was 'auth_token', should be 'token'
       console.log('Fetching risky users with token:', token ? 'Token found' : 'No token');
+      console.log('User authenticated:', isAuthenticated);
       
-      if (!token) {
-        console.warn('No auth token found, skipping risky users fetch');
+      if (!token || !isAuthenticated) {
+        console.warn('No auth token found or user not authenticated, skipping risky users fetch');
         setRiskyUsers([]); // Set empty array to show "no users found" message
         return;
       }
