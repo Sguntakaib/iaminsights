@@ -19,6 +19,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const CloudAccessVisualizer = () => {
+  const { isAuthenticated, token, user } = useAuth(); // Use auth context
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchEmail, setSearchEmail] = useState("");
   const [searchResource, setSearchResource] = useState("");
