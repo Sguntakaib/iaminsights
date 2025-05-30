@@ -834,7 +834,7 @@ def calculate_sensitive_resource_risk(user_access: UserAccess) -> tuple[float, L
             if resource_risk > 10:  # Only add significant risks to factors
                 risk_factors.append(RiskFactor(
                     factor_type="sensitive_resource_access",
-                    description=f"{resource.access_type.title()} access to {resource.provider.upper()} {resource.service} ({resource.resource_name})",
+                    description=f"{resource.access_type.title()} access to {resource.provider.value if hasattr(resource.provider, 'value') else str(resource.provider).upper()} {resource.service} ({resource.resource_name})",
                     weight=resource_risk,
                     severity=level,
                     justification=f"Access to {description} with {resource.access_type} permissions"
